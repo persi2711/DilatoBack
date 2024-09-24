@@ -57,6 +57,8 @@ export class UsuarioService {
       relations: ['role'],
     });
     if (!usuario) throw new NotFoundException(`No existe el usuario`);
+    if (updateUsuarioDto.Email && updateUsuarioDto.Email === usuario.Email)
+      throw new NotFoundException(`EL usuario con ese corro ya existe`);
 
     if (updateUsuarioDto.RoleId) {
       const rol = await this.roleRepository.findOne({

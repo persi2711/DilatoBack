@@ -37,6 +37,11 @@ export class PersonasService {
   async update(Id: string, updatePersonaDto: UpdatePersonaDto) {
     const persona = await this.personaRepository.findOne({ where: { Id } });
     if (!persona) throw new NotFoundException(`no se encontro la perosona`);
+    if (
+      updatePersonaDto.EmailPersona &&
+      updatePersonaDto.EmailPersona === persona.EmailPersona
+    )
+      throw new NotFoundException(`La persona con el correo existe`);
     this.personaRepository.merge(persona, updatePersonaDto);
     return this.personaRepository.save(persona);
   }
