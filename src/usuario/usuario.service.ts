@@ -30,6 +30,11 @@ export class UsuarioService {
       where: { Email: createUsuarioDto.Email },
     });
     if (correo) throw new NotFoundException(`Ya existe ese correo`);
+    const telefono = await this.usuarioRepository.findOne({
+      where: { Telefono: createUsuarioDto.Telefono },
+    });
+    if (telefono)
+      throw new NotFoundException(`Ya existe un usuario con ese telefono`);
     usuario.Password = bcrypt.hashSync(usuario.Password, 10);
     usuario.Estado = true;
     await this.usuarioRepository.save(usuario);
@@ -57,8 +62,23 @@ export class UsuarioService {
       relations: ['role'],
     });
     if (!usuario) throw new NotFoundException(`No existe el usuario`);
-    if (updateUsuarioDto.Email && updateUsuarioDto.Email === usuario.Email)
-      throw new NotFoundException(`EL usuario con ese corro ya existe`);
+    if (updateUsuarioDto.Email && updateUsuarioDto.Email !== usuario.Email) {
+      const email = await this.usuarioRepository.findOne({
+        where: { Email: updateUsuarioDto.Email },
+      });
+      if (email)
+        throw new NotFoundException(`EL usuario con ese correo ya existe`);
+    }
+    if (
+      updateUsuarioDto.Telefono &&
+      updateUsuarioDto.Telefono !== usuario.Telefono
+    ) {
+      const Telefono = await this.usuarioRepository.findOne({
+        where: { Telefono: updateUsuarioDto.Telefono },
+      });
+      if (Telefono)
+        throw new NotFoundException(`EL usuario con ese Telefono ya existe`);
+    }
 
     if (updateUsuarioDto.RoleId) {
       const rol = await this.roleRepository.findOne({

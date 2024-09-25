@@ -16,7 +16,17 @@ export class PersonasService {
     const correo = await this.personaRepository.findOne({
       where: { EmailPersona: persona.EmailPersona },
     });
+    const numeroDocumento = await await this.personaRepository.findOne({
+      where: { NumeroDocumento: persona.NumeroDocumento },
+    });
+    const TelefonoPersona = await await this.personaRepository.findOne({
+      where: { TelefonoPersona: persona.TelefonoPersona },
+    });
     if (correo) throw new NotFoundException(`Ya existe el correo`);
+    if (numeroDocumento)
+      throw new NotFoundException(`Ya Una persona con ese documento`);
+    if (TelefonoPersona)
+      throw new NotFoundException(`Ya Una persona con ese documento`);
     this.personaRepository.save(persona);
     return persona;
   }
@@ -37,11 +47,28 @@ export class PersonasService {
   async update(Id: string, updatePersonaDto: UpdatePersonaDto) {
     const persona = await this.personaRepository.findOne({ where: { Id } });
     if (!persona) throw new NotFoundException(`no se encontro la perosona`);
-    if (
-      updatePersonaDto.EmailPersona &&
-      updatePersonaDto.EmailPersona === persona.EmailPersona
-    )
-      throw new NotFoundException(`La persona con el correo existe`);
+    if (updatePersonaDto.EmailPersona) {
+      const correo = await this.personaRepository.findOne({
+        where: { EmailPersona: updatePersonaDto.EmailPersona },
+      });
+      if (correo.Id !== persona.Id)
+        throw new NotFoundException(`Ya existe el correo`);
+    }
+    if (updatePersonaDto.NumeroDocumento) {
+      const numeroDocumento = await this.personaRepository.findOne({
+        where: { NumeroDocumento: updatePersonaDto.NumeroDocumento },
+      });
+      if (numeroDocumento.Id !== persona.Id)
+        throw new NotFoundException(`Ya existe ses numero de documento`);
+    }
+    if (updatePersonaDto.TelefonoPersona) {
+      const telefonoPersona = await this.personaRepository.findOne({
+        where: { TelefonoPersona: updatePersonaDto.TelefonoPersona },
+      });
+      if (telefonoPersona.Id !== persona.Id)
+        throw new NotFoundException(`Ya existe ses numero de documento`);
+    }
+
     this.personaRepository.merge(persona, updatePersonaDto);
     return this.personaRepository.save(persona);
   }

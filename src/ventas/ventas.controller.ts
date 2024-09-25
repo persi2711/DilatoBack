@@ -52,4 +52,9 @@ export class VentasController {
   ChangeStatus(@Param('id', ParseUUIDPipe) id: string) {
     return this.ventasService.ChangeStatus(id);
   }
+  @Auth(ValidActions.FindByUserVenta)
+  @Get(':id')
+  FindByUser(@Param('id', ParseUUIDPipe) id: string) {
+    return this.ventasService.FindByUser(id);
+  }
 }

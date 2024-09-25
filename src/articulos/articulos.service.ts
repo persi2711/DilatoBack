@@ -16,6 +16,16 @@ export class ArticulosService {
   ) {}
   async create(createArticuloDto: CreateArticuloDto) {
     try {
+      const codigoArticulo = await this.articuloRespository.findOne({
+        where: { CodigoArticulo: createArticuloDto.CodigoArticulo },
+      });
+      if (codigoArticulo)
+        throw new NotFoundException(`ya existe un articulo con ese nombre`);
+      const nombreArticulo = await this.articuloRespository.findOne({
+        where: { NombreArticulo: createArticuloDto.NombreArticulo },
+      });
+      if (nombreArticulo)
+        throw new NotFoundException(`ya existe un articulo con ese nombre`);
       createArticuloDto.Estado = true;
       const {
         IdCategoria,
@@ -65,8 +75,29 @@ export class ArticulosService {
 
   async update(Id: string, updateArticuloDto: UpdateArticuloDto) {
     const articulo = await this.articuloRespository.findOne({ where: { Id } });
+
     if (!articulo) {
       throw new NotFoundException('Articulo no encotrado');
+    }
+    if (
+      updateArticuloDto.NombreArticulo &&
+      updateArticuloDto.NombreArticulo !== articulo.NombreArticulo
+    ) {
+      const nombreArticulo = await this.articuloRespository.findOne({
+        where: { NombreArticulo: updateArticuloDto.NombreArticulo },
+      });
+      if (nombreArticulo)
+        throw new NotFoundException(`ya existe un articulo con ese nombre`);
+    }
+    if (
+      updateArticuloDto.CodigoArticulo &&
+      updateArticuloDto.CodigoArticulo !== articulo.CodigoArticulo
+    ) {
+      const codigoArticulo = await this.articuloRespository.findOne({
+        where: { CodigoArticulo: updateArticuloDto.CodigoArticulo },
+      });
+      if (codigoArticulo)
+        throw new NotFoundException(`ya existe un articulo con ese nombre`);
     }
     if (updateArticuloDto.IdCategoria) {
       const categoria = await this.categoriaRespository.findOne({

@@ -18,6 +18,11 @@ export class CategoriasService {
 
   async create(createCategoriaDto: CreateCategoriaDto) {
     try {
+      const nombreCategoria = await this.categoriaRespository.findOne({
+        where: { NombreCategoria: createCategoriaDto.NombreCategoria },
+      });
+      if (nombreCategoria)
+        throw new InternalServerErrorException(`ya existe la categoria`);
       createCategoriaDto.Estado = true;
       const categoria = this.categoriaRespository.create(createCategoriaDto);
       await this.categoriaRespository.save(categoria);
@@ -46,6 +51,16 @@ export class CategoriasService {
       ...updateCategoriaDto,
     });
     if (!categoria) throw new NotFoundException(`Categoria Id No es correcto`);
+    if (
+      updateCategoriaDto.NombreCategoria &&
+      updateCategoriaDto.NombreCategoria !== categoria.NombreCategoria
+    ) {
+      const nombreCategoria = await this.categoriaRespository.findOne({
+        where: { NombreCategoria: updateCategoriaDto.NombreCategoria },
+      });
+      if (nombreCategoria)
+        throw new InternalServerErrorException(`ya existe la categoria`);
+    }
     try {
       await this.categoriaRespository.save(categoria);
       return categoria;

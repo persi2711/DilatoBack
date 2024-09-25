@@ -39,6 +39,11 @@ export class VentasService {
       where: { Id: createVentaDto.personaId },
     });
     if (!persona) throw new NotFoundException(`no se encotro la persona`);
+    const numeroComprobante = await this.ventaRepository.findOne({
+      where: { NumeroComprobante: createVentaDto.NumeroComprobante },
+    });
+    if (numeroComprobante)
+      throw new NotFoundException(`Ya existe el numero de comprobante`);
     venta.Estado = true;
     venta.persona = persona;
     venta.usuario = usuario;
@@ -123,6 +128,13 @@ export class VentasService {
         await this.detalleventaRepository.save(nuevoDetalleVenta);
       }
     }
+    if (updateVentaDto.NumeroComprobante) {
+      const numeroComprobante = await this.ventaRepository.findOne({
+        where: { NumeroComprobante: updateVentaDto.NumeroComprobante },
+      });
+      if (numeroComprobante.Id !== venta.Id)
+        throw new NotFoundException(`Ya existe el numero de comprobante`);
+    }
     await this.ventaRepository.merge(venta, updateVentaDto);
     return this.ventaRepository.save(venta);
   }
@@ -145,5 +157,10 @@ export class VentasService {
     const venta = await this.ventaRepository.findOne({ where: { Id } });
     venta.Estado = !venta.Estado;
     return this.ventaRepository.save(venta);
+  }
+  async FindByUser(Id: string) {
+    const usuario = await this.usuarioRepository.findOne({ where: { Id } });
+    if (!usuario) throw new NotFoundException(`no se encotro el usuario`);
+    return await this.ventaRepository.find({ where: { usuario: usuario } });
   }
 }

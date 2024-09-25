@@ -20,6 +20,7 @@ export enum ValidActions {
   UpdateIngreso = 'UpdateIngreso',
   DeleteIngreso = 'DeleteIngreso',
   ChangeStatusIngreso = 'ChangeStatusIngreso',
+  FindByUserIngreso = 'FindByUserIngreso',
   //Persona
   CreatePersona = 'CreatePersona',
   FindOnePersona = 'FindOnePersona',
@@ -49,6 +50,7 @@ export enum ValidActions {
   UpdateVenta = 'UpdateVenta',
   DeleteVenta = 'DeleteVenta',
   ChangeStatusVenta = 'ChangeStatusVenta',
+  FindByUserVenta = 'FindByUserVenta',
   //Action
   FindAllaction = 'FindAllaction',
 }

@@ -34,6 +34,7 @@ export class IngresoController {
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.ingresoService.findOne(id);
   }
+
   @Auth(ValidActions.UpdateIngreso)
   @Patch(':id')
   update(
@@ -51,5 +52,10 @@ export class IngresoController {
   @Patch('status/:id')
   ChangeStatus(@Param('id', ParseUUIDPipe) id: string) {
     return this.ingresoService.ChangeStatus(id);
+  }
+  @Auth(ValidActions.FindByUserIngreso)
+  @Get('user:id')
+  FindByUser(@Param('id', ParseUUIDPipe) id: string) {
+    return this.ingresoService.FindByUser(id);
   }
 }

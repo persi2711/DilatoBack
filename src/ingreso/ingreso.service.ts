@@ -33,6 +33,13 @@ export class IngresoService {
     const persona = await this.personaRepository.findOne({
       where: { Id: createIngresoDto.PersonaId },
     });
+    const numeroComprobante = await this.ingresoRepository.findOne({
+      where: { NumeroComprobante: createIngresoDto.NumeroComprobante },
+    });
+    if (numeroComprobante)
+      throw new NotFoundException(
+        `Ya existe un ingreso con ese numero de comprobante`,
+      );
 
     if (!usuario || !persona)
       throw new NotFoundException(`no se encotraron la persona o usuario`);
@@ -80,6 +87,18 @@ export class IngresoService {
   async update(Id: string, updateIngresoDto: UpdateIngresoDto) {
     const ingreso = await this.ingresoRepository.findOne({ where: { Id } });
     if (!ingreso) throw new NotFoundException(`no se encotro el ingreso`);
+    if (
+      updateIngresoDto.NumeroComprobante &&
+      updateIngresoDto.NumeroComprobante !== ingreso.NumeroComprobante
+    ) {
+      const numeroComprobante = await this.ingresoRepository.findOne({
+        where: { NumeroComprobante: updateIngresoDto.NumeroComprobante },
+      });
+      if (numeroComprobante)
+        throw new NotFoundException(
+          `Ya existe un ingreso con ese numero de comprobante`,
+        );
+    }
     if (updateIngresoDto.PersonaId) {
       const persona = await this.personaRepository.findOne({
         where: { Id: updateIngresoDto.PersonaId },
@@ -143,5 +162,10 @@ export class IngresoService {
     const ingreso = await this.ingresoRepository.findOne({ where: { Id } });
     ingreso.Estado = !ingreso.Estado;
     return this.ingresoRepository.save(ingreso);
+  }
+  async FindByUser(Id: string) {
+    const usuario = await this.usuarioRepository.findOne({ where: { Id } });
+    if (!usuario) throw new NotFoundException(`no se encotro el usuario`);
+    return await this.ingresoRepository.find({ where: { usuario: usuario } });
   }
 }
