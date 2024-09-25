@@ -47,25 +47,33 @@ export class PersonasService {
   async update(Id: string, updatePersonaDto: UpdatePersonaDto) {
     const persona = await this.personaRepository.findOne({ where: { Id } });
     if (!persona) throw new NotFoundException(`no se encontro la perosona`);
-    if (updatePersonaDto.EmailPersona) {
+    if (
+      updatePersonaDto.EmailPersona &&
+      updatePersonaDto.EmailPersona !== persona.EmailPersona
+    ) {
       const correo = await this.personaRepository.findOne({
         where: { EmailPersona: updatePersonaDto.EmailPersona },
       });
-      if (correo.Id !== persona.Id)
-        throw new NotFoundException(`Ya existe el correo`);
+      if (correo) throw new NotFoundException(`Ya existe el correo`);
     }
-    if (updatePersonaDto.NumeroDocumento) {
+    if (
+      updatePersonaDto.NumeroDocumento &&
+      updatePersonaDto.NumeroDocumento !== persona.NumeroDocumento
+    ) {
       const numeroDocumento = await this.personaRepository.findOne({
         where: { NumeroDocumento: updatePersonaDto.NumeroDocumento },
       });
-      if (numeroDocumento.Id !== persona.Id)
+      if (numeroDocumento)
         throw new NotFoundException(`Ya existe ses numero de documento`);
     }
-    if (updatePersonaDto.TelefonoPersona) {
+    if (
+      updatePersonaDto.TelefonoPersona &&
+      updatePersonaDto.TelefonoPersona !== persona.TelefonoPersona
+    ) {
       const telefonoPersona = await this.personaRepository.findOne({
         where: { TelefonoPersona: updatePersonaDto.TelefonoPersona },
       });
-      if (telefonoPersona.Id !== persona.Id)
+      if (telefonoPersona)
         throw new NotFoundException(`Ya existe ses numero de documento`);
     }
 
