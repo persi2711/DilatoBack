@@ -54,7 +54,7 @@ export class IngresoController {
     return this.ingresoService.ChangeStatus(id);
   }
   @Auth(ValidActions.FindByUserIngreso)
-  @Get('user:id')
+  @Get('user/:id')
   FindByUser(@Param('id', ParseUUIDPipe) id: string) {
     return this.ingresoService.FindByUser(id);
   }
