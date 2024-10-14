@@ -79,7 +79,12 @@ export class VentasService {
   async findOne(Id: string) {
     const venta = await this.ventaRepository.findOne({
       where: { Id },
-      relations: ['usuario', 'persona', 'detalleVenta'],
+      relations: [
+        'usuario',
+        'persona',
+        'detalleVenta',
+        'detalleVenta.articulo',
+      ],
     });
     if (!venta) throw new NotFoundException(`no se encontro la venta`);
     return venta;
