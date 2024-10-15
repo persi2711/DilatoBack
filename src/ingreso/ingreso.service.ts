@@ -78,7 +78,12 @@ export class IngresoService {
   async findOne(Id: string) {
     const ingreso = await this.ingresoRepository.findOne({
       where: { Id },
-      relations: ['persona', 'usuario', 'detalleIngreso'],
+      relations: [
+        'persona',
+        'usuario',
+        'detalleIngreso',
+        'detalleIngreso.articulo',
+      ],
     });
     if (!ingreso) throw new NotFoundException(`no se encotro el ingreso`);
     return ingreso;
