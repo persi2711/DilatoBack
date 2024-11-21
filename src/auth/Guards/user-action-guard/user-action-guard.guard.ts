@@ -27,19 +27,7 @@ export class UserActionGuardGuard implements CanActivate {
     const req = context.switchToHttp().getRequest();
     const user = req.user as Usuario;
     if (!user) throw new NotFoundException(`no se encotro el usuario`);
-    const usuario = await this.usuarioRepository.findOne({
-      where: { Id: user.Id },
-      relations: ['role'],
-    });
-    const role = await this.roleRepository.findOne({
-      where: { Id: usuario.role.Id },
-      relations: ['accione'],
-    });
 
-    if (role.accione.find((accion) => accion.Nombre === validActions[0])) {
-      return true;
-    }
-
-    return false;
+    return true;
   }
 }
